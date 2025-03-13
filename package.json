@@ -1,0 +1,21 @@
+{
+  "name": "bot_wa_mod",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.16",
+    "baileys": "github:whiskeysockets/baileys",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "node-schedule": "^2.1.1",
+    "puppeteer": "^24.4.0",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
