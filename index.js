@@ -87,7 +87,7 @@ async function schedulePrayerReminders() {
             let [hour, minute] = time.split(":").map(Number);
 
             scheduledJobs[user][prayer] = schedule.scheduleJob({ hour, minute }, () => {
-                sendMessage(user, `🕌 *${prayer}* - ${time} di ${city}\n Jangan Lupa Sholat ${prayer}`);
+                globalSock.sendMessage(user, `🕌 *${prayer}* - ${time} di ${city}\n Jangan Lupa Sholat ${prayer}`);
             });
             // Jika waktu Imsak, tambahkan pengingat sahur 30 menit sebelumnya
             if (prayer === "Imsak") {
@@ -99,7 +99,7 @@ async function schedulePrayerReminders() {
                 }
                 let sahurTime = `${sahurHour.toString().padStart(2, '0')}:${sahurMinute.toString().padStart(2, '0')}`;
                 scheduledJobs[user]["Sahur"] = schedule.scheduleJob({ hour: sahurHour, minute: sahurMinute }, () => {
-                    sendMessage(ANNOUNCEMENT_GROUP, `🍽️ Pengingat Sahur! Waktu sahur di ${city} akan berakhir dalam 30 menit. Segera selesaikan makan Anda!`);
+                    globalSock.sendMessage(ANNOUNCEMENT_GROUP, `🍽️ Pengingat Sahur! Waktu sahur di ${city} akan berakhir dalam 30 menit. Segera selesaikan makan Anda!`);
                 });
             }
             // Pengingat 5 menit sebelum berbuka
@@ -112,13 +112,13 @@ async function schedulePrayerReminders() {
                 }
                 let bukaTime = `${bukaHour.toString().padStart(2, '0')}:${bukaMinute.toString().padStart(2, '0')}`;
                 scheduledJobs[user]["Berbuka"] = schedule.scheduleJob({ hour: bukaHour, minute: bukaMinute }, () => {
-                    sendMessage(ANNOUNCEMENT_GROUP, `🍛🍴 Pengingat Berbuka! Waktu berbuka di ${city} akan tiba dalam 5 menit. Siapkan makanan dan minuman Anda!`);
+                    globalSock.sendMessage(ANNOUNCEMENT_GROUP, `🍛🍴 Pengingat Berbuka! Waktu berbuka di ${city} akan tiba dalam 5 menit. Siapkan makanan dan minuman Anda!`);
                 });
             }
             // Pengingat berbuka puasa
             if (prayer === "Maghrib") {
                 scheduledJobs[user]["SelamatBerbuka"] = schedule.scheduleJob({ hour, minute }, () => {
-                    sendMessage(ANNOUNCEMENT_GROUP, `🌙 Selamat Berbuka Puasa! untuk di ${city}, Semoga berkah dan penuh rahmat. 🍽️`);
+                    globalSock.sendMessage(ANNOUNCEMENT_GROUP, `🌙 Selamat Berbuka Puasa! untuk di ${city}, Semoga berkah dan penuh rahmat. 🍽️`);
                 });
             }
         });
@@ -154,9 +154,9 @@ async function handleIncomingMessage(message) {
                 const city = parts[0].trim();
                 const country = parts[1].trim();
                 saveLocation(remoteJid, city, country);
-                sendMessage(remoteJid, `📍 Lokasi diatur ke ${city}, ${country}. Jadwal sholat akan diperbarui.`);
+                await globalSock.sendMessage(remoteJid, `📍 Lokasi diatur ke ${city}, ${country}. Jadwal sholat akan diperbarui.`);
             } else {
-                sendMessage(remoteJid, '❌ Format salah. Gunakan: !setlokasi Kota, Negara');
+                await globalSock.sendMessage(remoteJid, '❌ Format salah. Gunakan: !setlokasi Kota, Negara');
             }
         } else if (text === '!jadwalsholat') {
             const locations = loadLocations();
@@ -167,9 +167,9 @@ async function handleIncomingMessage(message) {
                 Object.entries(prayerTimes).forEach(([prayer, time]) => {
                     response += `- *${prayer}*: ${time}\n`;
                 });
-                sendMessage(remoteJid, response);
+                await globalSock.sendMessage(remoteJid, response);
             } else {
-                sendMessage(remoteJid, '❌ Gagal mengambil jadwal sholat. Coba lagi nanti.');
+                await globalSock.sendMessage(remoteJid, '❌ Gagal mengambil jadwal sholat. Coba lagi nanti.');
             }
         }
     }
