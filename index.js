@@ -43,7 +43,13 @@ async function getPrayerTimes(city, country) {
     if (prayerCache[cacheKey]) return prayerCache[cacheKey];
 
     try {
-        const response = await axios.get(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2`);
+        const response = await axios.get(`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&method=2`);
+        
+        if (!response.data || !response.data.data || !response.data.data.timings) {
+            console.error('❌ Tidak ada data jadwal sholat:', response.data);
+            return null;
+        }
+
         let timings = response.data?.data?.timings;
         if (!timings) return null;
 
